@@ -1,0 +1,22 @@
+# Arquivos gerados pelo Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+
+# Arquivos gerados pelo VSCode
+.vscode/
+.settings/
+
+# Dependências do Python
+venv/
+env/
+
+# Arquivos de mídia/carregados
+media/
+
+# Outros arquivos
+*.swp
+.DS_Store
