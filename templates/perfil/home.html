@@ -1,8 +1,9 @@
-{% extends 'bases/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block 'head' %}
-    <link rel="stylesheet" href="{% static 'perfil/css/home.css' %}">
+    <link href="{% static 'perfil/css/home.css' %}" rel="stylesheet">
+    <link href="{% static 'perfil/css/gerenciar.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block 'body' %}
@@ -50,19 +51,22 @@
                     <div class="saldo">
                         <span class="fonte-destaque">Saldo total</span>
                         <br>
-                        <span class="font-light">R$ 1.200,00</span>
+                        <span class="font-light">R$ {{ saldo_total }}</span>
                     </div>
                     <hr class="hr-borda">
                     <span class="fonte-destaque">Suas contas</span>
 
                     <div class="div-contas">
                         
+                        
+                        {% for conta in contas %}
                             <div class="lista-conta">
-                                <span>Nubank</span>
-                                <span class="total-conta">R$ 3.000,00</span>
+                                <span>{{ contas.apelido }}</span>
+                                <span class="total-conta">R$ {{ conta.valor }}</span>
+                                
                             </div>
                             <br>
-                        
+                        {% endfor %}
                         
                         
                     </div>
