@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'head' %}
+
+    <link href="{% static 'perfil/css/home.css' %}" rel="stylesheet">
+    <link href="{% static 'perfil/css/gerenciar.css' %}" rel="stylesheet">
+    <style>
+        .linha-conta{
+
+            background-color: var(--dark-color);
+            padding: 20px;
+            border-radius: 10px;
+
+        }
+    </style>
+{% endblock %}
+
+{% block 'body' %}
+
+    <div class="container">
+        <br>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <br>
+        <div class="row">
+
+            <div class="col-md-8">
+                <p class="fonte-destaque" style="color: red;">Contas vencidas</p>
+                <div class="card">
+                        
+                            <div class="linha-conta">
+                                {% if contas_vencidas %}
+                                {% for conta in contas_vencidas %}
+                                <div class="row mt-4">
+                                    <div class="col-md text-center">
+                                        {{ conta.titulo }}
+                                    </div>
+                                    <div class="col-md text-center">
+                                        Dia: {{ conta.dia_pagamento }}
+                                    </div>
+                                    <div class="col-md text-center">
+                                        <a href="#" class="botao-principal">PAGAR</a>
+                                    </div> 
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <p class="text-center">Sem contas vencidas</p>
+                                {% endif %}
+                            </div>
+                       
+                </div>
+                <br>
+                <br>
+                <p class="fonte-destaque" style="color: #E96363;">Contas próximas do vencimento</p>
+                <div class="card">
+                    
+                        
+                            <div class="linha-conta">
+                                {% if contas_proximas_vencimento %}
+                                {% for conta in contas_proximas_vencimento %}
+                                <div class="row mt-4">
+                                    <div class="col-md text-center">
+                                        {{ conta.titulo }}
+                                    </div>
+                                    <div class="col-md text-center">
+                                        Dia: {{ conta.dia_pagamento }}
+                                    </div>
+                                    <div class="col-md text-center">
+                                        <a href="#" class="botao-principal">PAGAR</a>
+                                    </div> 
+                                    
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <p class="text-center">Sem contas próximas a vencer</p>
+                                {% endif %}
+                            </div>
+                        
+                        
+                    
+                </div>
+                <br>
+                <br>
+                <p class="fonte-destaque">Restantes</p>
+                <div class="card">
+                
+                          
+                            <div class="linha-conta">
+                                {% if restantes %}
+                                {% for conta in restantes %}
+                                <div class="row mt-4">
+                                    <div class="col-md text-center">
+                                        {{ conta.titulo }}
+                                    </div>
+                                    <div class="col-md text-center">
+                                        Dia: {{ conta.dia_pagamento }}
+                                    </div>
+                                    <div class="col-md text-center">
+                                        <a href="#" class="botao-principal">PAGAR</a>
+                                    </div> 
+                                    
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <p class="text-center">Sem contas restantes</p>
+                                {% endif %}
+                            </div>
+                        
+                       
+                    
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

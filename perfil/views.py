@@ -3,28 +3,36 @@ from .models import Conta, Categoria
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.db.models import Sum
-
+from .utils import calcula_total
+from extrato.models import Valores
+from datetime import datetime
 
 def home(request):
     contas = Conta.objects.all()
+    valores = Valores.objects.filter(data__month=datetime.now().month)
+    saida = Valores.objects.filter(tipo='S')
+    entrada = Valores.objects.filter(tipo='E')
 
-    def calcula_total(obj, campo):
-        total = 0
-        for i in obj:
-            total += getattr(i, campo)
-
-        return total
-
+    # função para calcular o valor total de todas as contas juntas
     saldo_total = calcula_total(contas, 'valor')
-    return render(request, 'perfil/home.html', {'contas': contas, 'saldo_total': saldo_total,})
+    
+    total_entrada = calcula_total(entrada, 'valor')
+    total_saida = calcula_total(saida, 'valor')
+
+    context = {
+        'total_entrada': total_entrada,
+        'total_saida': total_saida,
+        'contas': contas,
+        'saldo_total': saldo_total,
+    }
+
+    return render(request, 'perfil/home.html', context)
 
 
 def gerenciar(request):
     contas = Conta.objects.all()
     categorias = Categoria.objects.all()
-    total_conta = 0
-    for conta in contas:
-        total_conta += conta.valor
+    total_conta = contas.aggregate(Sum('valor'))
 
     context = {
         'contas': contas,
@@ -42,9 +50,11 @@ def cadastrar_banco(request):
     valor = request.POST.get('valor')
     icone = request.FILES.get('icone')
     
+    # strip() vai retirar os espaçoes para validação do apelido
     if len(apelido.strip()) == 0 or len(valor.strip()) == 0:
         messages.add_message(request, constants.ERROR, 'Preencha todos os campos')
         return redirect('/perfil/gerenciar/')
+    
 
     conta = Conta(
         apelido = apelido,
@@ -55,14 +65,15 @@ def cadastrar_banco(request):
     )
 
     conta.save()
-
-
-
+    messages.add_message(request, constants.SUCCESS, 'Conta cadastrada com sucesso!')
     return redirect('/perfil/gerenciar/')
 
 def deletar_banco(request, id):
+    
     conta = Conta.objects.get(id=id)
+
     conta.delete()
+    messages.add_message(request, constants.WARNING, 'Conta deletada com sucesso!')
     return redirect('/perfil/gerenciar/')
 
 def cadastrar_categoria(request):
@@ -88,4 +99,5 @@ def update_categoria(request, id):
 
     categoria.save()
 
+    messages.add_message(request, constants.SUCCESS, 'Categoria atualizado com sucesso!')
     return redirect('/perfil/gerenciar/')
