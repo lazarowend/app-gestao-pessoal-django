@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import Conta, Categoria
+from contas.models import ContaPagar
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.db.models import Sum
-from .utils import calcula_total
+from .utils import calcula_total, qtd_contas,  calcula_equilibrio_financeiro
 from extrato.models import Valores
 from datetime import datetime
 
@@ -13,17 +14,37 @@ def home(request):
     saida = Valores.objects.filter(tipo='S')
     entrada = Valores.objects.filter(tipo='E')
 
+    quantidade_contas = qtd_contas()
+    contas_vencidas = quantidade_contas['contas_vencidas']
+    contas_proximas_vencimento = quantidade_contas['contas_proximas_vencimento']
+
+    percentual_gastos_essenciais, percentual_gastos_nao_essenciais = calcula_equilibrio_financeiro()
+
     # função para calcular o valor total de todas as contas juntas
     saldo_total = calcula_total(contas, 'valor')
     
     total_entrada = calcula_total(entrada, 'valor')
     total_saida = calcula_total(saida, 'valor')
 
+    contas_a_pagar_do_mes = ContaPagar.objects.all()
+    contas_a_pagar_do_mes = calcula_total(contas_a_pagar_do_mes, 'valor')
+    entrada_do_mes = Valores.objects.filter(tipo='E', data__month=datetime.now().month).aggregate(total=Sum('valor'))['total']
+
+    total_livre = float(entrada_do_mes - contas_a_pagar_do_mes)
+
     context = {
         'total_entrada': total_entrada,
         'total_saida': total_saida,
         'contas': contas,
         'saldo_total': saldo_total,
+        'contas_vencidas': contas_vencidas,
+        'contas_proximas_vencimento': contas_proximas_vencimento,
+        'percentual_gastos_essenciais': percentual_gastos_essenciais,
+        'percentual_gastos_nao_essenciais': percentual_gastos_nao_essenciais,
+        'saldo_total': saldo_total,
+        'entrada_do_mes': entrada_do_mes,
+        'contas_a_pagar_do_mes': contas_a_pagar_do_mes,
+        'total_livre': total_livre
     }
 
     return render(request, 'perfil/home.html', context)
@@ -32,11 +53,11 @@ def home(request):
 def gerenciar(request):
     contas = Conta.objects.all()
     categorias = Categoria.objects.all()
-    total_conta = contas.aggregate(Sum('valor'))
+    saldo_total = calcula_total(contas, 'valor')
 
     context = {
         'contas': contas,
-        'total_conta': total_conta,
+        'saldo_total': saldo_total,
         'categorias': categorias
     }
 

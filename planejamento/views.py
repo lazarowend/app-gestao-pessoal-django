@@ -8,7 +8,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 def definir_planejamento(request):
     categorias = Categoria.objects.all()
-    return render(request, 'definir_planejamento.html', {'categorias': categorias})
+    return render(request, 'planejamento/definir_planejamento.html', {'categorias': categorias})
+
+
+def ver_planejamento(request):
+    categorias = Categoria.objects.all()
+    return render(request, 'planejamento/ver_planejamento.html', {'categorias': categorias})
 
 
 

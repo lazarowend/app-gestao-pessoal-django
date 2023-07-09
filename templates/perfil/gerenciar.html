@@ -39,7 +39,7 @@
                 {% endfor %}
                 <hr>
                 <span class="fonte-destaque">Total:</span>
-                <span class="positivo total-conta font-destaque">R$ {{ total_conta }}</span>
+                <span class="positivo total-conta font-destaque">R$ {{ saldo_total }}</span>
             </div>
 
             <div class="col-md-2"></div>
@@ -54,6 +54,7 @@
                     <label>Banco</label>
                     <select name="banco" class="form-select">
                         <option value="NU">Nubank</option>
+                        <option value="CE">Caixa econômica</option>
                     </select>
                     <br>
                     <label>Tipo</label>
@@ -102,7 +103,7 @@
 
                     
                         <div class="lista-contas-main">
-                            <span>{{ categoria.categoria }}</span>
+                            <span style="float: right;">{{ categoria.categoria }}</span>
 
                             <span class="total-conta">
                                 <a href="{% url 'update_categoria' categoria.id %}">

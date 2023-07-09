@@ -58,3 +58,16 @@ def dashboard(request):
         dados[categoria.categoria] = Valores.objects.filter(categoria=categoria).aggregate(Sum('valor'))['valor__sum']
 
     return render(request, 'contas/dashboard.html', {'labels': list(dados.keys()), 'values': list(dados.values())})
+
+
+def pagar_conta(request, id):
+    conta_a_pagar = ContaPagar.objects.get(id=id)
+    data_pagamento = datetime.now()
+
+    pagar = ContaPaga(conta=conta_a_pagar, data_pagamento=data_pagamento)
+    pagar.save()
+
+    conta_a_pagar.delete()
+    
+    messages.add_message(request, constants.SUCCESS, 'Conta paga com sucesso sucesso')
+    return redirect('ver_contas')
